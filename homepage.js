@@ -9,34 +9,57 @@ const Headers = {
   Authorization:
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyODk0ZGFhY2FhMjAwMTU1MmExNjMiLCJpYXQiOjE2MzYyMTA0MjMsImV4cCI6MTYzNzQyMDAyM30.9uvhyG1EhitWyihcTHCf1D72jKOt1Lf3wMSVOrXZ0wY",
 };
-const BASE_URL = "https://striveschool-api.herokuapp.com/api/movies";
-const method = " GET";
+const movies = document.getElementById("romantic");
+
+const BASE_URL = "https://striveschool-api.herokuapp.com/api/movies/romantic";
+const method = "GET";
 const getMovies = async () => {
   // e.preventDefault();
   try {
-    const response = await fetch(BASE_URL, {
-      method,
-      body: JSON.stringify(),
-      Headers,
-    });
-    console.log(response);
+    const response = await fetch(
+      "https://striveschool-api.herokuapp.com/api/movies",
+      {
+        body: JSON.stringify(),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyODk0ZGFhY2FhMjAwMTU1MmExNjMiLCJpYXQiOjE2MzYyMTA0MjMsImV4cCI6MTYzNzQyMDAyM30.9uvhyG1EhitWyihcTHCf1D72jKOt1Lf3wMSVOrXZ0wY",
+        },
+      }
+    );
 
     if (response.ok) {
       const body = await response.json();
-      const row = document.getElementById("#romantic");
-      row.innerHTML = "";
-      body.forEach((movie) => {
-        row.innerHTML += `<img
-            src="./assets/media/media0.webp"
-            class="img-fluid section-img"
-            alt=""
-          />`;
+      console.log(body);
+
+      body.forEach((element) => {
+        fetch(`https://striveschool-api.herokuapp.com/api/movies/${element}`, {
+          method: "GET",
+
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyODk0ZGFhY2FhMjAwMTU1MmExNjMiLCJpYXQiOjE2MzYyMTA0MjMsImV4cCI6MTYzNzQyMDAyM30.9uvhyG1EhitWyihcTHCf1D72jKOt1Lf3wMSVOrXZ0wY",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            // movies.innerHTML = "";
+            data.forEach((movie) => {
+              movies.innerHTML += `<img
+              src="${movie.imageUrl}"
+              class="img-fluid section-img" 
+              alt=""
+            />`;
+            });
+          });
       });
+    } else {
+      throw Error("fetch failed");
     }
   } catch (e) {
-    console.log(e);
+    alert(e);
   }
 };
-window.onload = () => {
-  getMovies();
-};
+
+getMovies();
